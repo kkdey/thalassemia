@@ -1,0 +1,180 @@
+---
+title: "Thalassemia Meta Analysis Secondary Factors"
+author: "Kushal K Dey"
+date: "July 9, 2015"
+output: html_document
+---
+
+We compare between BMT (Bone Marrow Transplant) and PBHSCT (Peripheral Blood Stem Cell Transplant) in terms of the acute GVHD (aGVHD), chronic GVHD (cGVHD) and Transplant Related Mortality (TRM) (together known as Secondary Effects) which are key indicators of the effectiveness of the treatment and are called primary factors. 
+
+```{r,echo=FALSE,eval=TRUE}
+
+
+########################   R packages   #################################
+
+suppressMessages(suppressWarnings(library(rmeta)))
+suppressMessages(suppressWarnings(library(meta)))
+suppressMessages(suppressWarnings(library(metafor)))
+suppressMessages(suppressWarnings(library(plyr)))
+suppressMessages(suppressWarnings(library(dplyr)))
+
+
+
+```
+
+The forest plot for the primary effects is as follows : 
+
+```{r, echo=FALSE,eval=TRUE,cache=TRUE}
+
+##################################### Primary factor comparison ##############################################
+
+#######################################   Loading the Data  (aGVHD) #######################################
+
+trials_1=c("Chunfu Li 2012","J Gaziev 2008","IB Resnick 2007","A Ghavamzadeh 2008","Yesilipek MA 2012");
+
+BMT_events_1=c(1,1,1,53,11)
+BMT_total_1=c(30,9,8,96,88)
+BMT_non_events_1=BMT_total_1-BMT_events_1;
+PBHSCT_events_1=c(5,4,4,63,20);
+PBHSCT_total_1=c(52,7,12,87,137);
+PBHSCT_non_events_1=PBHSCT_total_1-PBHSCT_events_1;
+weight_1=c(0.010,0.011,0.011,0.876,0.092);
+
+data1 <- data.frame(cbind(trials_1,BMT_events_1,BMT_total_1,PBHSCT_events_1,PBHSCT_total_1),stringsAsFactors=FALSE);
+
+res <- rma(ai=as.numeric(data1$BMT_events_1), bi=as.numeric(data1$BMT_total_1), ci=as.numeric(data1$PBHSCT_events_1), di=as.numeric(data1$PBHSCT_total_1),data=data1,
+           measure="RR", method="REML");
+
+#########################################  Loading the Data (cGVHD)  #########################################
+
+trials_2=c("Chunfu Li 2012","J Gaziev 2008","IB Resnick 2007","A Ghavamzadeh 2008",
+           "Yesilipek MA 2012");
+
+BMT_events_2=c(0,0,1,18,4)
+BMT_total_2=c(30,9,8,96,88)
+BMT_non_events_2=BMT_total_2-BMT_events_2;
+PBHSCT_events_2=c(0,3,4,42,22);
+PBHSCT_total_2=c(52,7,12,87,137);
+PBHSCT_non_events_2=PBHSCT_total_2-PBHSCT_events_2;
+weight_2=c(NA,0.022,0.043,0.775,0.161);
+
+#########################################  Loading the Data (TRM)  #########################################
+
+trials_3=c("Chunfu Li 2012","J Gaziev 2008","IB Resnick 2007","A Ghavamzadeh 2008");
+
+BMT_events_3=c(3,0,0,8)
+BMT_total_3=c(30,9,8,96)
+BMT_non_events_3=BMT_total_3-BMT_events_3;
+PBHSCT_events_3=c(4,3,0,12);
+PBHSCT_total_3=c(52,7,12,87);
+PBHSCT_non_events_3=PBHSCT_total_3-PBHSCT_events_3;
+weight_3=c(0.293,0.088,NA,0.619);
+
+###################################  Pooling the Primary Factor Data  #####################################
+
+BMT_events =c(BMT_events_1,BMT_events_2,BMT_events_3);
+BMT_non_events = c(BMT_non_events_1,BMT_non_events_2, BMT_non_events_3);
+PBHSCT_events = c(PBHSCT_events_1, PBHSCT_events_2, PBHSCT_events_3);
+PBHSCT_non_events = c(PBHSCT_non_events_1, PBHSCT_non_events_2, PBHSCT_non_events_3);
+weight =c(weight_1,weight_2,weight_3);
+labels = c(rep("aGVHD",5),rep("cGVHD",5),c(rep("TRM",4)));
+
+data = data.frame(cbind(c(trials_1,trials_2,trials_3), BMT_events, BMT_non_events, PBHSCT_events, PBHSCT_non_events,weight, labels));
+print(data)
+
+suppressMessages(attach(data))
+
+spacings =c(rep(".",5),rep("",5),rep(" ",4));
+trial_names=paste0(c(trials_1,trials_2,trials_3),spacings);
+
+data1=data;
+
+res <- rma(ai=as.numeric(as.vector(data1$BMT_events)), bi=as.numeric(as.vector(data1$BMT_non_events)), ci=as.numeric(as.vector(data1$PBHSCT_events)), di=as.numeric(as.vector(data1$PBHSCT_non_events)),data=data,
+           slab=as.character(trial_names),
+           measure="RR", method="REML");
+
+png(filename="/Users/kushal/Documents/thalassemia/plots/forest_secondary_effects_BMT_PBHSCT.png",width=800,height=600,res=100)
+
+par(font=2, cex=0.75)
+forest(res,annotate=T, addfit=T,addcred=T, 
+       showweight=F, xlim=c(-13, 4), ylim=c(-2,27),
+       at=log(c(0.25, 0.5, 0.7, 1, 1.5, 2, 4)),
+        atransf=exp,main="Secondary Effects Forest Plot",
+       ilab=cbind(as.numeric(as.vector(data1$BMT_events)),as.numeric(as.vector(data1$BMT_non_events)),
+                  as.numeric(as.vector(data1$PBHSCT_events)),as.numeric(as.vector(data1$PBHSCT_non_events)),
+                  paste0(100*round(as.numeric(as.vector(data1$weight)),digits=3))),
+       ilab.xpos=c(-10,-8,-6,-4,-2), 
+       mlab="RE model for all primary effects",
+       xlab="Risk Ratio",
+       rows=c(3:7,11.5:15.5,20:23),
+       cex=0.80);
+
+data1 <- data;
+
+res.1 <- rma(ai=as.numeric(as.vector(data1$BMT_events)), bi=as.numeric(as.vector(data1$BMT_non_events)), ci=as.numeric(as.vector(data1$PBHSCT_events)), di=as.numeric(as.vector(data1$PBHSCT_non_events)),data=data1,
+           measure="RR", subset = (as.character(data1$labels)=="aGVHD"), method="REML");
+
+res.2 <- rma(ai=as.numeric(as.vector(data1$BMT_events)), bi=as.numeric(as.vector(data1$BMT_non_events)), ci=as.numeric(as.vector(data1$PBHSCT_events)), di=as.numeric(as.vector(data1$PBHSCT_non_events)),data=data1,
+           measure="RR", subset = (as.character(data1$labels)=="cGVHD"), method="REML");
+
+res.3 <- rma(ai=as.numeric(as.vector(data1$BMT_events)), bi=as.numeric(as.vector(data1$BMT_non_events)), ci=as.numeric(as.vector(data1$PBHSCT_events)), di=as.numeric(as.vector(data1$PBHSCT_non_events)),data=data1,
+           measure="RR", subset = (as.character(data1$labels)=="TRM"), method="REML");
+
+
+addpoly(res.1, row=18.5, cex=0.75, atransf=exp, mlab="RE model for TRM");
+addpoly(res.2, row=10, cex=0.75, atransf=exp, mlab="RE model for cGVHD");
+addpoly(res.3, row=1.5, cex=0.75, atransf=exp, mlab="RE model for aGVHD");
+
+
+
+op <-par(cex=0.75, font=4)
+text(-13, c(24, 16.5, 8), pos=4, c("TRM", "chronic GVHD","acute GVHD"), cex=0.8)
+
+par(font=2)
+text(c(-10,-8,-6,-4,-2), 26, c("Events","Non_events", "Events", "Non_events","Weight (%)"));
+text(c(-9,-5),27,c("BMT","PBHSCT"))
+
+par(font=2,cex=0.5)
+text(c(-0.5,0.5),-1.5,c("BMT","PBHSCT"))
+
+par(font=2, cex=0.5)
+text(-10.5,       -1.5, paste0("Heterogeneity:   ", "Q= ",round(res$QE,digits=2)," (p-val= ",
+round(res$QEp,digits=3),")",",     tau^2=",round(res$tau2,digits=3)),cex=1)
+text(-10,        -2, paste0("Overall Test effect:   Z= ", round(res$zval,digits=2), " (p-val= ",round(res$pval,digits=3),")"),cex=1)
+
+
+dev.off()
+
+```
+
+
+The funnel plot for the primary effects is as follows 
+
+```{r echo=FALSE, eval=TRUE}
+#####################  Funnel Plot : Publication Bias ###################3
+
+#par(mar=c(-2,-4,-1,-1))
+
+png(filename="/Users/kushal/Documents/thalassemia/plots/funnel_secondary_effects_thalassemia.png")
+
+par(mfrow=c(3,1),font=2,cex=0.75)
+
+funnel(res.1)
+title(paste0("Funnel plot for Publication Bias (aGVHD)", paste0("\n\nBegg's test: ",round(as.numeric(ranktest(res.1)$tau),digits=2)," (p-val= ", round(ranktest(res.1)$pval,digits=3),")",": ", "Egger's test: ", round(as.numeric(regtest(res.1)$zval),digits=2), " (p-val= ", round(regtest(res.1)$pval,digits=3),")")),
+cex.main = 0.75, font.main= 2, col.main= "black")
+
+
+funnel(res.2)
+title(paste0("Funnel plot for Publication Bias (cGVHD)", paste0("\n\nBegg's test: ",round(as.numeric(ranktest(res.2)$tau),digits=2)," (p-val= ", round(ranktest(res.2)$pval,digits=3),")",": ", "Egger's test: ", round(as.numeric(regtest(res.2)$zval),digits=2), " (p-val= ", round(regtest(res.2)$pval,digits=3),")")),
+cex.main = 0.75, font.main= 2, col.main= "black")
+
+
+funnel(res.3)
+title(paste0("Funnel plot for Publication Bias (TRM)", paste0("\n\nBegg's test: ",round(as.numeric(ranktest(res.3)$tau),digits=2)," (p-val= ", round(ranktest(res.3)$pval,digits=3),")",": ", "Egger's test: ", round(as.numeric(regtest(res.3)$zval),digits=2), " (p-val= ", round(regtest(res.3)$pval,digits=3),")")),
+cex.main = 0.75, font.main= 2, col.main= "black")
+
+dev.off()
+
+
+```
+

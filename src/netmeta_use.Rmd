@@ -1,0 +1,184 @@
+---
+title: 'Netmeta : using it for thalassemia data'
+author: "Kushal K Dey"
+date: "July 11, 2015"
+output: html_document
+---
+
+Recently in UseR 2015, there was a [presentation](https://rpubs.com/polanin/meta-analysis_rpackages_useR2015) on meta analysis packages in R by Joshua R. Polanin and Emily A. Hennessy. It was shown that this field has been gaining strength in recent years as many new meta analysis packages are coming up in 2014 and 2015. As of now, in terms of use, they found that **metafor**, **epiR** and **rmeta** are the most popular packages. I personally like the **metafor** package a lot. But unfortunately these packages are not equipped with the power to do simultaneous network based meta analysis. That sort of requirement came up when we were trying to compare different methods of stem cell transplant. 
+
+In this script, we learn about the package **netmeta**, **gemtc** and **pcnetmeta**, which are supposed to come handy for a Thalassemia stem cell transplant project I am part of, where we are asked to compare across multiple treatments and come up with a joint comparison. That sort of breaks the pattern of looking at odds ratios (which you can only do when comparing two treatments) and constricting forest plots based on these odds ratios for various trials considered under meta analysis. A fantastic paper that does a thorough comparative review of the three packages is by [Neupane et al](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC4277278/). It seems they reached a conclusion that **netmeta** and **gemtc** can do much more stuff than **pcnetmeta**. also **pcnetmeta** uses **rjags** which is a pain in the ass to install. 
+
+
+
+We shall investigate these packages and hopefully by the end, we will be able to apply these methods to the thalassemia meta analysis data.
+
+```{r packages, echo=FALSE, eval=TRUE}
+library(netmeta)
+```
+
+
+```{r echo=FALSE, eval=FALSE}
+
+data("smokingcessation")
+p1 <- pairwise(treat = list(treat1, treat2, treat3),
+               event = list(event1, event2, event3),
+               n = list(n1, n2, n3),
+               data=smokingcessation)
+
+net1 <- netmeta(TE, seTE, treat1, treat2, studlab, data=p1, sm="IRR")
+summary(net1)
+
+netgraph(net1, points=TRUE, cex.points=3, cex=1.25)
+tname <- c("Control","Diet", "Diet 2")
+netgraph(net1, points=TRUE, cex.points=3, cex=1.25, labels=tname)
+
+forest(net1, ref="plac")
+
+
+```
+
+
+We first assign build the thalassemia MRD, MSD and MUD data frames.
+
+```{r echo=TRUE, eval=TRUE}
+
+vec1 <- c(15,16,54,66,'MRD','MSD','Gaziev 2013','OS');
+vec2 <- c(23,28,15,21,'MRD','MUD','Hongeng 2006','OS');
+vec3 <- c(15,16,61,66,'MRD','MSD','Gaziev 2013','DFS');
+vec4 <- c(26,28,17,21,'MRD','MUD','Hongeng 2006','DFS');
+vec5 <- c(16,16,58,66,'MRD','MSD','Gaziev 2013','Engraftment');
+vec6 <- c(24,28,18,21,'MRD','MUD','Hongeng 2006','Engraftment');
+vec7 <- c(3,16,24,66,'MRD','MSD','Gaziev 2013','aGVHD');
+vec8 <- c(12,28,12,21,'MRD','MUD','Hongeng 2006','aGVHD');
+vec9 <- c(2,16,7,66,'MRD','MSD','Gaziev 2013','cGVHD');
+vec10 <- c(6,28,4,21,'MRD','MUD','Hongeng 2006','cGVHD');
+vec11 <- c(1,16,5,66,'MRD','MSD','Gaziev 2013','TRM');
+vec12 <- c(2,28,3,21,'MRD','MUD','Hongeng 2006','TRM');
+
+data <- data.frame(rbind(vec1,vec2,vec3,vec4,vec5,vec6,vec7,vec8,vec9,vec10,vec11,vec12));
+
+colnames(data)=c('events1','total1','events2','total2','treat1','treat2','ID','effect');
+
+attach(data)
+
+par(mfrow=c(3,1))
+
+data_OS <- data[which(as.character(effect)=="OS"),];
+
+p_OS <- pairwise(treat = list(as.character(treat1), as.character(treat2)),
+               event = list(as.numeric(as.vector(events1)), as.numeric(as.vector(events2))),
+               n = list(as.numeric(as.vector(total1)), as.numeric(as.vector(total2))),
+               studlab=as.factor(ID),
+               data=data_OS)
+
+net1 <- netmeta(TE, seTE, treat1, treat2, studlab, data=p_OS, sm="RR")
+#summary(net1)
+
+#netmeasures1 <- netmeasures(net1);
+#netgraph(net1, thickness="w.fixed", plastic=TRUE, col="red",start="circle", col.multiarm="purple")
+
+png('/Users/kushal/Documents/thalassemia/plots/OS_netmeta_forest.png');
+forest(net1,reference.group = 'MRD',leftcols="studlab", rightcols=NULL,
+        leftlabs="treatments",smlab="Overall Survival")
+dev.off()
+
+data_DFS <- data[which(as.character(effect)=="DFS"),];
+
+p_DFS <- pairwise(treat = list(as.character(treat1), as.character(treat2)),
+               event = list(as.numeric(as.vector(events1)), as.numeric(as.vector(events2))),
+               n = list(as.numeric(as.vector(total1)), as.numeric(as.vector(total2))),
+               studlab=as.factor(ID),
+               data=data_DFS)
+
+net1 <- netmeta(TE, seTE, treat1, treat2, studlab, data=p_DFS, sm="RR")
+#summary(net1)
+
+#netmeasures1 <- netmeasures(net1);
+#netgraph(net1, thickness="w.fixed", plastic=TRUE, col="red",start="circle", col.multiarm="purple")
+
+png('/Users/kushal/Documents/thalassemia/plots/DFS_netmeta_forest.png');
+forest(net1,reference.group = 'MRD',leftcols="studlab",rightcols=NULL,
+        leftlabs="treatments",smlab="Disease Free Survival")
+dev.off()
+
+data_Engraftment <- data[which(as.character(effect)=="Engraftment"),];
+
+p_Engraftment <- pairwise(treat = list(as.character(treat1), as.character(treat2)),
+               event = list(as.numeric(as.vector(events1)), as.numeric(as.vector(events2))),
+               n = list(as.numeric(as.vector(total1)), as.numeric(as.vector(total2))),
+               studlab=as.factor(ID),
+               data=data_Engraftment)
+
+net1 <- netmeta(TE, seTE, treat1, treat2, studlab, data=p_Engraftment, sm="RR")
+#summary(net1)
+
+#netmeasures1 <- netmeasures(net1);
+#netgraph(net1, thickness="w.fixed", plastic=TRUE, col="red",start="circle", col.multiarm="purple")
+
+png('/Users/kushal/Documents/thalassemia/plots/Engraftment_netmeta_forest.png');
+forest(net1,reference.group = 'MRD',leftcols="studlab",rightcols=NULL,
+        leftlabs="treatments",smlab="Engraftment")
+dev.off()
+
+data_aGVHD <- data[which(as.character(effect)=="aGVHD"),];
+
+p_aGVHD <- pairwise(treat = list(as.character(treat1), as.character(treat2)),
+               event = list(as.numeric(as.vector(events1)), as.numeric(as.vector(events2))),
+               n = list(as.numeric(as.vector(total1)), as.numeric(as.vector(total2))),
+               studlab=as.factor(ID),
+               data=data_aGVHD)
+
+net1 <- netmeta(TE, seTE, treat1, treat2, studlab, data=p_aGVHD, sm="RR")
+#summary(net1)
+
+#netmeasures1 <- netmeasures(net1);
+#netgraph(net1, thickness="w.fixed", plastic=TRUE, col="red",start="circle", col.multiarm="purple")
+
+png('/Users/kushal/Documents/thalassemia/plots/aGVHD_netmeta_forest.png');
+forest(net1,reference.group = 'MRD',leftcols="studlab",rightcols=NULL,
+        leftlabs="treatments",smlab="acute GVHD")
+dev.off()
+
+
+data_cGVHD <- data[which(as.character(effect)=="cGVHD"),];
+
+p_cGVHD <- pairwise(treat = list(as.character(treat1), as.character(treat2)),
+               event = list(as.numeric(as.vector(events1)), as.numeric(as.vector(events2))),
+               n = list(as.numeric(as.vector(total1)), as.numeric(as.vector(total2))),
+               studlab=as.factor(ID),
+               data=data_cGVHD)
+
+net1 <- netmeta(TE, seTE, treat1, treat2, studlab, data=p_cGVHD, sm="RR")
+#summary(net1)
+
+#netmeasures1 <- netmeasures(net1);
+#netgraph(net1, thickness="w.fixed", plastic=TRUE, col="red",start="circle", col.multiarm="purple")
+
+png('/Users/kushal/Documents/thalassemia/plots/cGVHD_netmeta_forest.png');
+forest(net1,reference.group = 'MRD',leftcols="studlab",rightcols=NULL,
+        leftlabs="treatments",smlab="chronic GVHD")
+dev.off()
+
+data_TRM <- data[which(as.character(effect)=="TRM"),];
+
+p_TRM <- pairwise(treat = list(as.character(treat1), as.character(treat2)),
+               event = list(as.numeric(as.vector(events1)), as.numeric(as.vector(events2))),
+               n = list(as.numeric(as.vector(total1)), as.numeric(as.vector(total2))),
+               studlab=as.factor(ID),
+               data=data_TRM)
+
+net1 <- netmeta(TE, seTE, treat1, treat2, studlab, data=p_TRM, sm="RR")
+#summary(net1)
+
+#netmeasures1 <- netmeasures(net1);
+#netgraph(net1, thickness="w.fixed", plastic=TRUE, col="red",start="circle", col.multiarm="purple")
+
+png('/Users/kushal/Documents/thalassemia/plots/TRM_netmeta_forest.png');
+forest(net1,reference.group = 'MRD',leftcols="studlab",rightcols=NULL,
+        leftlabs="treatments",smlab="TRM")
+dev.off()
+
+```
+
+
