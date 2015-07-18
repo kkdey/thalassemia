@@ -104,7 +104,7 @@ forest(res,annotate=T, addfit=T,addcred=T,
                   as.numeric(as.vector(data1$PBHSCT_events)),as.numeric(as.vector(data1$PBHSCT_non_events)),
                   paste0(100*round(as.numeric(as.vector(data1$weight)),digits=3))),
        ilab.xpos=c(-10,-8,-6,-4,-2), 
-       mlab="RE model for all primary effects",
+       mlab="RE model for all secondary effects",
        xlab="Risk Ratio",
        rows=c(3:7,11.5:15.5,20:23),
        cex=0.80);
@@ -121,14 +121,14 @@ res.3 <- rma(ai=as.numeric(as.vector(data1$BMT_events)), bi=as.numeric(as.vector
            measure="RR", subset = (as.character(data1$labels)=="TRM"), method="REML");
 
 
-addpoly(res.1, row=18.5, cex=0.75, atransf=exp, mlab="RE model for TRM");
+addpoly(res.1, row=18.5, cex=0.75, atransf=exp, mlab="RE model for aGVHD");
 addpoly(res.2, row=10, cex=0.75, atransf=exp, mlab="RE model for cGVHD");
-addpoly(res.3, row=1.5, cex=0.75, atransf=exp, mlab="RE model for aGVHD");
+addpoly(res.3, row=1.5, cex=0.75, atransf=exp, mlab="RE model for TRM");
 
 
 
 op <-par(cex=0.75, font=4)
-text(-13, c(24, 16.5, 8), pos=4, c("TRM", "chronic GVHD","acute GVHD"), cex=0.8)
+text(-13, c(24, 16.5, 8), pos=4, c("acute GVHD", "chronic GVHD","TRM"), cex=0.8)
 
 par(font=2)
 text(c(-10,-8,-6,-4,-2), 26, c("Events","Non_events", "Events", "Non_events","Weight (%)"));
