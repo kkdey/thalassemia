@@ -99,14 +99,14 @@ par(font=2, cex=0.75)
 forest(res,annotate=T, addfit=T,addcred=T, 
        showweight=F, xlim=c(-13, 4), ylim=c(-2,27),
        at=log(c(0.25, 0.5, 0.7, 1, 1.5, 2, 4)),
-        atransf=exp,main="Secondary Effects Forest Plot",
+        atransf=exp,main="Secondary Outcomes Forest Plot",
        ilab=cbind(as.numeric(as.vector(data1$BMT_events)),as.numeric(as.vector(data1$BMT_non_events)),
                   as.numeric(as.vector(data1$PBHSCT_events)),as.numeric(as.vector(data1$PBHSCT_non_events)),
                   paste0(100*round(as.numeric(as.vector(data1$weight)),digits=3))),
        ilab.xpos=c(-10,-8,-6,-4,-2), 
-       mlab="RE model for all secondary effects",
+       mlab="RE model for all secondary outcomes",
        xlab="Risk Ratio",
-       rows=c(3:7,11.5:15.5,20:23),
+       rows=rev(c(3:6,10.5:14.5,19:23)),
        cex=0.80);
 
 data1 <- data;
@@ -121,14 +121,14 @@ res.3 <- rma(ai=as.numeric(as.vector(data1$BMT_events)), bi=as.numeric(as.vector
            measure="RR", subset = (as.character(data1$labels)=="TRM"), method="REML");
 
 
-addpoly(res.1, row=18.5, cex=0.75, atransf=exp, mlab="RE model for aGVHD");
-addpoly(res.2, row=10, cex=0.75, atransf=exp, mlab="RE model for cGVHD");
+addpoly(res.1, row=17.5, cex=0.75, atransf=exp, mlab="RE model for aGVHD");
+addpoly(res.2, row=9, cex=0.75, atransf=exp, mlab="RE model for cGVHD");
 addpoly(res.3, row=1.5, cex=0.75, atransf=exp, mlab="RE model for TRM");
 
 
 
 op <-par(cex=0.75, font=4)
-text(-13, c(24, 16.5, 8), pos=4, c("acute GVHD", "chronic GVHD","TRM"), cex=0.8)
+text(-13, c(24, 15.5, 7), pos=4, c("acute GVHD", "chronic GVHD","TRM"), cex=0.8)
 
 par(font=2)
 text(c(-10,-8,-6,-4,-2), 26, c("Events","Non_events", "Events", "Non_events","Weight (%)"));
@@ -155,7 +155,7 @@ The funnel plot for the primary effects is as follows
 
 #par(mar=c(-2,-4,-1,-1))
 
-png(filename="/Users/kushal/Documents/thalassemia/plots/funnel_secondary_effects_thalassemia.png")
+png(filename="/Users/kushal/Documents/thalassemia/plots/funnel_secondary_effects_thalassemia.png", res=100)
 
 par(mfrow=c(3,1),font=2,cex=0.75)
 

@@ -17,28 +17,6 @@ We shall investigate these packages and hopefully by the end, we will be able to
 library(netmeta)
 ```
 
-
-```{r echo=FALSE, eval=FALSE}
-
-data("smokingcessation")
-p1 <- pairwise(treat = list(treat1, treat2, treat3),
-               event = list(event1, event2, event3),
-               n = list(n1, n2, n3),
-               data=smokingcessation)
-
-net1 <- netmeta(TE, seTE, treat1, treat2, studlab, data=p1, sm="IRR")
-summary(net1)
-
-netgraph(net1, points=TRUE, cex.points=3, cex=1.25)
-tname <- c("Control","Diet", "Diet 2")
-netgraph(net1, points=TRUE, cex.points=3, cex=1.25, labels=tname)
-
-forest(net1, ref="plac")
-
-
-```
-
-
 We first assign build the thalassemia MRD, MSD and MUD data frames.
 
 ```{r echo=TRUE, eval=TRUE}
@@ -79,7 +57,7 @@ net1 <- netmeta(TE, seTE, treat1, treat2, studlab, data=p_OS, sm="RR")
 #netgraph(net1, thickness="w.fixed", plastic=TRUE, col="red",start="circle", col.multiarm="purple")
 
 png('/Users/kushal/Documents/thalassemia/plots/OS_netmeta_forest.png');
-forest(net1,reference.group = 'MRD',leftcols="studlab", rightcols=NULL,
+forest(net1,reference.group = 'MSD',leftcols="studlab", rightcols=NULL,
         leftlabs="treatments",smlab="Overall Survival")
 dev.off()
 
@@ -98,7 +76,7 @@ net1 <- netmeta(TE, seTE, treat1, treat2, studlab, data=p_DFS, sm="RR")
 #netgraph(net1, thickness="w.fixed", plastic=TRUE, col="red",start="circle", col.multiarm="purple")
 
 png('/Users/kushal/Documents/thalassemia/plots/DFS_netmeta_forest.png');
-forest(net1,reference.group = 'MRD',leftcols="studlab",rightcols=NULL,
+forest(net1,reference.group = 'MSD',leftcols="studlab",rightcols=NULL,
         leftlabs="treatments",smlab="Disease Free Survival")
 dev.off()
 
@@ -117,7 +95,7 @@ net1 <- netmeta(TE, seTE, treat1, treat2, studlab, data=p_Engraftment, sm="RR")
 #netgraph(net1, thickness="w.fixed", plastic=TRUE, col="red",start="circle", col.multiarm="purple")
 
 png('/Users/kushal/Documents/thalassemia/plots/Engraftment_netmeta_forest.png');
-forest(net1,reference.group = 'MRD',leftcols="studlab",rightcols=NULL,
+forest(net1,reference.group = 'MSD',leftcols="studlab",rightcols=NULL,
         leftlabs="treatments",smlab="Engraftment")
 dev.off()
 
@@ -136,7 +114,7 @@ net1 <- netmeta(TE, seTE, treat1, treat2, studlab, data=p_aGVHD, sm="RR")
 #netgraph(net1, thickness="w.fixed", plastic=TRUE, col="red",start="circle", col.multiarm="purple")
 
 png('/Users/kushal/Documents/thalassemia/plots/aGVHD_netmeta_forest.png');
-forest(net1,reference.group = 'MRD',leftcols="studlab",rightcols=NULL,
+forest(net1,reference.group = 'MSD',leftcols="studlab",rightcols=NULL,
         leftlabs="treatments",smlab="acute GVHD")
 dev.off()
 
@@ -156,7 +134,7 @@ net1 <- netmeta(TE, seTE, treat1, treat2, studlab, data=p_cGVHD, sm="RR")
 #netgraph(net1, thickness="w.fixed", plastic=TRUE, col="red",start="circle", col.multiarm="purple")
 
 png('/Users/kushal/Documents/thalassemia/plots/cGVHD_netmeta_forest.png');
-forest(net1,reference.group = 'MRD',leftcols="studlab",rightcols=NULL,
+forest(net1,reference.group = 'MSD',leftcols="studlab",rightcols=NULL,
         leftlabs="treatments",smlab="chronic GVHD")
 dev.off()
 
@@ -175,7 +153,7 @@ net1 <- netmeta(TE, seTE, treat1, treat2, studlab, data=p_TRM, sm="RR")
 #netgraph(net1, thickness="w.fixed", plastic=TRUE, col="red",start="circle", col.multiarm="purple")
 
 png('/Users/kushal/Documents/thalassemia/plots/TRM_netmeta_forest.png');
-forest(net1,reference.group = 'MRD',leftcols="studlab",rightcols=NULL,
+forest(net1,reference.group = 'MSD',leftcols="studlab",rightcols=NULL,
         leftlabs="treatments",smlab="TRM")
 dev.off()
 

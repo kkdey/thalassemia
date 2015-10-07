@@ -111,7 +111,7 @@ net1 &lt;- netmeta(TE, seTE, treat1, treat2, studlab, data=p_OS, sm=&quot;RR&quo
 #netgraph(net1, thickness=&quot;w.fixed&quot;, plastic=TRUE, col=&quot;red&quot;,start=&quot;circle&quot;, col.multiarm=&quot;purple&quot;)
 
 png('/Users/kushal/Documents/thalassemia/plots/OS_netmeta_forest.png');
-forest(net1,reference.group = 'MRD',leftcols=&quot;studlab&quot;, rightcols=NULL,
+forest(net1,reference.group = 'MSD',leftcols=&quot;studlab&quot;, rightcols=NULL,
         leftlabs=&quot;treatments&quot;,smlab=&quot;Overall Survival&quot;)
 dev.off()</code></pre>
 <pre><code>## quartz_off_screen 
@@ -131,7 +131,7 @@ net1 &lt;- netmeta(TE, seTE, treat1, treat2, studlab, data=p_DFS, sm=&quot;RR&qu
 #netgraph(net1, thickness=&quot;w.fixed&quot;, plastic=TRUE, col=&quot;red&quot;,start=&quot;circle&quot;, col.multiarm=&quot;purple&quot;)
 
 png('/Users/kushal/Documents/thalassemia/plots/DFS_netmeta_forest.png');
-forest(net1,reference.group = 'MRD',leftcols=&quot;studlab&quot;,rightcols=NULL,
+forest(net1,reference.group = 'MSD',leftcols=&quot;studlab&quot;,rightcols=NULL,
         leftlabs=&quot;treatments&quot;,smlab=&quot;Disease Free Survival&quot;)
 dev.off()</code></pre>
 <pre><code>## quartz_off_screen 
@@ -151,7 +151,7 @@ net1 &lt;- netmeta(TE, seTE, treat1, treat2, studlab, data=p_Engraftment, sm=&qu
 #netgraph(net1, thickness=&quot;w.fixed&quot;, plastic=TRUE, col=&quot;red&quot;,start=&quot;circle&quot;, col.multiarm=&quot;purple&quot;)
 
 png('/Users/kushal/Documents/thalassemia/plots/Engraftment_netmeta_forest.png');
-forest(net1,reference.group = 'MRD',leftcols=&quot;studlab&quot;,rightcols=NULL,
+forest(net1,reference.group = 'MSD',leftcols=&quot;studlab&quot;,rightcols=NULL,
         leftlabs=&quot;treatments&quot;,smlab=&quot;Engraftment&quot;)
 dev.off()</code></pre>
 <pre><code>## quartz_off_screen 
@@ -171,7 +171,7 @@ net1 &lt;- netmeta(TE, seTE, treat1, treat2, studlab, data=p_aGVHD, sm=&quot;RR&
 #netgraph(net1, thickness=&quot;w.fixed&quot;, plastic=TRUE, col=&quot;red&quot;,start=&quot;circle&quot;, col.multiarm=&quot;purple&quot;)
 
 png('/Users/kushal/Documents/thalassemia/plots/aGVHD_netmeta_forest.png');
-forest(net1,reference.group = 'MRD',leftcols=&quot;studlab&quot;,rightcols=NULL,
+forest(net1,reference.group = 'MSD',leftcols=&quot;studlab&quot;,rightcols=NULL,
         leftlabs=&quot;treatments&quot;,smlab=&quot;acute GVHD&quot;)
 dev.off()</code></pre>
 <pre><code>## quartz_off_screen 
@@ -191,7 +191,7 @@ net1 &lt;- netmeta(TE, seTE, treat1, treat2, studlab, data=p_cGVHD, sm=&quot;RR&
 #netgraph(net1, thickness=&quot;w.fixed&quot;, plastic=TRUE, col=&quot;red&quot;,start=&quot;circle&quot;, col.multiarm=&quot;purple&quot;)
 
 png('/Users/kushal/Documents/thalassemia/plots/cGVHD_netmeta_forest.png');
-forest(net1,reference.group = 'MRD',leftcols=&quot;studlab&quot;,rightcols=NULL,
+forest(net1,reference.group = 'MSD',leftcols=&quot;studlab&quot;,rightcols=NULL,
         leftlabs=&quot;treatments&quot;,smlab=&quot;chronic GVHD&quot;)
 dev.off()</code></pre>
 <pre><code>## quartz_off_screen 
@@ -211,7 +211,7 @@ net1 &lt;- netmeta(TE, seTE, treat1, treat2, studlab, data=p_TRM, sm=&quot;RR&qu
 #netgraph(net1, thickness=&quot;w.fixed&quot;, plastic=TRUE, col=&quot;red&quot;,start=&quot;circle&quot;, col.multiarm=&quot;purple&quot;)
 
 png('/Users/kushal/Documents/thalassemia/plots/TRM_netmeta_forest.png');
-forest(net1,reference.group = 'MRD',leftcols=&quot;studlab&quot;,rightcols=NULL,
+forest(net1,reference.group = 'MSD',leftcols=&quot;studlab&quot;,rightcols=NULL,
         leftlabs=&quot;treatments&quot;,smlab=&quot;TRM&quot;)
 dev.off()</code></pre>
 <pre><code>## quartz_off_screen 
