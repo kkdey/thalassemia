@@ -98,7 +98,7 @@ par(font=2, cex=0.75)
 forest(res,annotate=T, addfit=T,addcred=T, 
        showweight=F, xlim=c(-13, 4), ylim=c(-2,27),
        at=log(c(0.25, 0.5, 0.7, 1, 1.5, 2, 4)),
-        atransf=exp,main="Primary Outcomes Forest Plot",
+        atransf=exp,main="Primary outcomes by stem cell source",
        ilab=cbind(as.numeric(as.vector(data$BMT_events)),as.numeric(as.vector(data$BMT_non_events)),
                   as.numeric(as.vector(data$PBHSCT_events)),as.numeric(as.vector(data$PBHSCT_non_events)),
                   paste0(100*round(as.numeric(as.vector(data$weight)),digits=3))),
